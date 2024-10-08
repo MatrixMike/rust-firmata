@@ -8,22 +8,22 @@ use std::thread;
 
 fn init<T: firmata::Firmata>(board: &Arc<Mutex<T>>) {
     let mut b = board.lock().unwrap();
-    b.i2c_config(0);
-    b.i2c_write(0x09, "o".as_bytes());
+    let _ = b.i2c_config(0);
+    let _ = b.i2c_write(0x09, "o".as_bytes());
     thread::sleep_ms(10);
 }
 
 fn set_rgb<T: firmata::Firmata>(board: &Arc<Mutex<T>>, rgb: [u8; 3]) {
     let mut b = board.lock().unwrap();
-    b.i2c_write(0x09, "n".as_bytes());
-    b.i2c_write(0x09, &rgb);
+    let _ = b.i2c_write(0x09, "n".as_bytes());
+    let _ = b.i2c_write(0x09, &rgb);
 }
 
 fn read_rgb<T: firmata::Firmata>(board: &Arc<Mutex<T>>) -> Vec<u8> {
     {
         let mut b = board.lock().unwrap();
-        b.i2c_write(0x09, "g".as_bytes());
-        b.i2c_read(0x09, 3);
+        let _ = b.i2c_write(0x09, "g".as_bytes());
+        let _ = b.i2c_read(0x09, 3);
     }
     loop {
         {
@@ -54,9 +54,10 @@ fn main() {
         let b = board.clone();
         thread::spawn(move || {
             loop {
-                b.lock().unwrap().read_and_decode();
-                b.lock().unwrap().query_firmware();
-                thread::sleep_ms(10);
+                let _ = b.lock().unwrap().read_and_decode();
+                let _ = b.lock().unwrap().query_firmware();
+                let ten_millis = time::Duration::from_millis(10);
+                thread::sleep(ten_millis);
             }
         });
     }

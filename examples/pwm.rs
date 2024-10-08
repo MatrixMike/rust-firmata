@@ -25,11 +25,11 @@ fn main() {
     println!("firmware name {}", b.firmware_name());
     println!("protocol version {}", b.protocol_version());
 
-    b.set_pin_mode(pin, firmata::PWM);
+    let _ = b.set_pin_mode(pin, firmata::PWM);
 
     loop {
         for value in 0..255 {
-            b.analog_write(pin, value);
+            let _ = b.analog_write(pin, value);
             println!("{}", value);
             thread::sleep_ms(10);
         }

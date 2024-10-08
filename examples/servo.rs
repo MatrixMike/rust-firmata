@@ -25,13 +25,13 @@ fn main() {
     println!("firmware name {}", b.firmware_name());
     println!("protocol version {}", b.protocol_version());
 
-    b.set_pin_mode(pin, firmata::SERVO);
+    let _ = b.set_pin_mode(pin, firmata::SERVO);
 
     loop {
         for value in 0..180{
-            b.analog_write(pin, value);
+            let _ = b.analog_write(pin, value);
             println!("{}", value);
-            thread::sleep_ms(10);
+            thread::sleep_ms(10);  //mjh duration needed aot integer when sleep() used
         }
     }
 }

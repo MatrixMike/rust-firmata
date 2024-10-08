@@ -26,19 +26,19 @@ fn main() {
     let led = 13;
     let button = 2;
 
-    b.set_pin_mode(led, firmata::OUTPUT);
-    b.set_pin_mode(button, firmata::INPUT);
+    let _ = b.set_pin_mode(led, firmata::OUTPUT);
+    let _ = b.set_pin_mode(button, firmata::INPUT);
 
-    b.report_digital(button, 1);
+    let _ = b.report_digital(button, 1);
 
     loop {
-        b.read_and_decode();
+        let _ = b.read_and_decode();
         if b.pins()[button as usize].value == 0 {
             println!("off");
-            b.digital_write(led, 0);
+            let _ = b.digital_write(led, 0);
         } else {
             println!("on");
-            b.digital_write(led, 1);
+            let _ = b.digital_write(led, 1);
         }
 
         thread::sleep_ms(100);

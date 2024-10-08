@@ -23,14 +23,14 @@ fn main() {
     println!("firmware name {}", b.firmware_name());
     println!("protocol version {}", b.protocol_version());
 
-    b.set_pin_mode(13, firmata::OUTPUT);
+    let _ = b.set_pin_mode(10, firmata::OUTPUT);
 
     let mut i = 0;
 
     loop {
         thread::sleep_ms(400);
         println!("{}",i);
-        b.digital_write(13, i);
+        let _ = b.digital_write(10, i);    // was 13
         i ^= 1;
     }
 }
