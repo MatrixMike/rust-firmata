@@ -323,7 +323,7 @@ impl<T:io::Read+io::Write> Firmata for Board<T> {
                 self.protocol_version = format!("{:o}.{:o}", buf[1], buf[2]);
                 Ok(())
             },
-            ANALOG_MESSAGE...0xEF => {
+            ANALOG_MESSAGE..=0xEF => {
                 let value = (buf[1] as i32) | ((buf[2] as i32) << 7);
                 let pin = ((buf[0] as i32) & 0x0F) + 14;
 
@@ -332,7 +332,7 @@ impl<T:io::Read+io::Write> Firmata for Board<T> {
                 }
                 Ok(())
             },
-            DIGITAL_MESSAGE...0x9F => {
+            DIGITAL_MESSAGE..=0x9F => {
                 let port = (buf[0] as i32) & 0x0F;
                 let value = (buf[1] as i32) | ((buf[2] as i32) << 7);
 
