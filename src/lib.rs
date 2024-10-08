@@ -48,7 +48,7 @@ pub const ONEWIRE: u8 = 7;
 pub const STEPPER: u8 = 8;
 pub const ENCODER: u8 = 9;
 
-fn read<T: io::Read>(port: &mut T, len: i32) -> Result<(Vec<u8>)> {
+fn read<T: io::Read>(port: &mut T, len: i32) -> Result<Vec<u8>> {  // mjh
     let mut vec: Vec<u8> = vec![];
     let mut len = len;
 
