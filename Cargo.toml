@@ -5,6 +5,7 @@ serial = "0.4.0"
 [package]
 name = "firmata"
 version = "0.2.0"
+edition = "2021"
 license = "MIT"
 authors = ["Adrian Zankich <adzankich@gmail.com>"]
 readme = "README.md"

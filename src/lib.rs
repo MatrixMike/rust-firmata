@@ -58,7 +58,7 @@ fn read<T: io::Read>(port: &mut T, len: i32) -> Result<Vec<u8>> {  // mjh
         match port.read(buf) {
             Ok(_) => {
                 vec.push(buf[0]);
-                len = len - 1;
+                len -= 1;
                 if len == 0 {
                    break;
                 }
@@ -71,7 +71,7 @@ fn read<T: io::Read>(port: &mut T, len: i32) -> Result<Vec<u8>> {  // mjh
             } }
     }
 
-    return Ok(vec);
+    Ok(vec)
 }
 
 /// A structure representing an I2C reply.
@@ -158,7 +158,7 @@ impl<T: io::Read+io::Write> Board<T> {
     /// Creates a new `Board` given an `io::Read+io::Write`.
     pub fn new(connection: Box<T>) -> Result<Board<T>> {
         let mut b = Board {
-            connection: connection,
+            connection,
             firmware_name: String::new(),
             firmware_version: String::new(),
             protocol_version: String::new(),
@@ -176,7 +176,7 @@ impl<T: io::Read+io::Write> Board<T> {
         try!(b.report_digital(0, 1));
         try!(b.report_digital(1, 1));
 
-        return Ok(b);
+        Ok(b)
     }
 }
 
@@ -297,7 +297,7 @@ impl<T:io::Read+io::Write> Firmata for Board<T> {
 
         while i < 8 {
             if self.pins[8*port+i].value != 0 {
-                value = value | (1 << i)
+                value |= 1 << i
             }
             i += 1;
         }
@@ -313,7 +313,7 @@ impl<T:io::Read+io::Write> Firmata for Board<T> {
 
     fn set_pin_mode(&mut self, pin: i32, mode: u8) -> Result<()> {
         self.pins[pin as usize].mode = mode;
-        self.connection.write(&mut [PIN_MODE, pin as u8, mode as u8]).map(|_|())
+        self.connection.write(&mut [PIN_MODE, pin as u8, mode]).map(|_|())
     }
 
     fn read_and_decode(&mut self) -> Result<()> {
@@ -339,10 +339,8 @@ impl<T:io::Read+io::Write> Firmata for Board<T> {
                 for i in 0..8 {
                     let pin = (8 * port) + i;
 
-                    if self.pins.len() as i32 > pin {
-                        if self.pins[pin as usize].mode == INPUT {
-                            self.pins[pin as usize].value = (value >> (i & 0x07)) & 0x01;
-                        }
+                    if self.pins.len() as i32 > pin && self.pins[pin as usize].mode == INPUT {
+                        self.pins[pin as usize].value = (value >> (i & 0x07)) & 0x01;
                     }
                 }
                 Ok(())
@@ -357,7 +355,7 @@ impl<T:io::Read+io::Write> Firmata for Board<T> {
                 }
                 match buf[1] {
                     ANALOG_MAPPING_RESPONSE => {
-                        if self.pins.len() > 0 {
+                        if !self.pins.is_empty() {
                            let mut i = 2;
                            while i < buf.len()-1 {
                                if buf[i] != 127u8 {
